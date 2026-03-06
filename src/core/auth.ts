@@ -14,12 +14,7 @@ export async function readAuthData(): Promise<AuthData> {
 }
 
 function resolveAntigravityAccountsPath(): string {
-  const home = homedir();
-  const configDir =
-    process.platform === "win32"
-      ? process.env.APPDATA ?? join(home, "AppData", "Roaming")
-      : join(home, ".config");
-  return join(configDir, "opencode", "antigravity-accounts.json");
+  return join(homedir(), ".config", "opencode", "antigravity-accounts.json");
 }
 
 export async function readAntigravityAccounts(): Promise<AntigravityAccountsFile> {
