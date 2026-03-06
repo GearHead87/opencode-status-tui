@@ -4,15 +4,16 @@
   "private": true,
   "type": "module",
   "bin": {
-    "opencode-status-tui": "dist/index.js"
+    "opencode-status-tui": "dist/opencode-status-tui"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/index.tsx",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "start": "node dist/index.js",
-    "typecheck": "tsc --noEmit"
+    "build": "bun run build:linux",
+    "build:linux": "mkdir -p dist && bun build ./src/index.tsx --compile --target=bun-linux-x64 --outfile ./dist/opencode-status-tui",
+    "dev": "bun --watch src/index.tsx",
+    "lint": "bunx eslint .",
+    "lint:fix": "bunx eslint . --fix",
+    "start": "./dist/opencode-status-tui",
+    "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
     "ink": "^5.0.0",
@@ -23,9 +24,9 @@
     "@types/react": "^18.2.66",
     "eslint": "^9.23.0",
     "prettier": "^3.5.3",
-    "tsx": "^4.19.2",
+    "react-devtools-core": "^6.1.5",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0"
   },
-  "packageManager": "pnpm@10.30.3"
+  "packageManager": "bun@1.3.10"
 }
