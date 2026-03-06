@@ -23,6 +23,15 @@ export interface CopilotAuthData {
   expires?: number;
 }
 
+export interface AnthropicAuthData {
+  type: "oauth" | "api" | "wellknown";
+  access?: string;
+  refresh?: string;
+  expires?: number;
+  key?: string;
+  token?: string;
+}
+
 export type CopilotTier = "free" | "pro" | "pro+" | "business" | "enterprise";
 
 export interface CopilotQuotaConfig {
@@ -51,6 +60,7 @@ export interface AuthData {
   "zhipuai-coding-plan"?: ZhipuAuthData;
   "zai-coding-plan"?: ZhipuAuthData;
   "github-copilot"?: CopilotAuthData;
+  anthropic?: AnthropicAuthData;
 }
 
 export const HIGH_USAGE_THRESHOLD = 80;
