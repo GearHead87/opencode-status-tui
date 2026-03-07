@@ -1,0 +1,57 @@
+name: Release Linux Binary
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Create .env from GitHub secrets
+        run: |
+          {
+            echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}"
+            echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}"
+          } > .env
+
+      - name: Build Linux binary
+        run: bun run build:linux
+
+      - name: Package release assets
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+          BASE_NAME="opencode-status-tui-${VERSION}-linux-x64"
+
+          cp dist/opencode-status-tui "dist/${BASE_NAME}"
+          chmod +x "dist/${BASE_NAME}"
+
+          (cd dist && zip -r "${BASE_NAME}.zip" "${BASE_NAME}")
+          sha256sum "dist/${BASE_NAME}" "dist/${BASE_NAME}.zip" > "dist/${BASE_NAME}.sha256"
+
+      - name: Create GitHub release with changelog
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            dist/opencode-status-tui-${{ github.ref_name }}-linux-x64
+            dist/opencode-status-tui-${{ github.ref_name }}-linux-x64.zip
+            dist/opencode-status-tui-${{ github.ref_name }}-linux-x64.sha256
